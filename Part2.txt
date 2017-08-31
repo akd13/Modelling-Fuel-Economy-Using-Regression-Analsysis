@@ -1,0 +1,294 @@
+> #scatterplot
+> par(mfrow=c(1,1))
+> plot(CityMPG~Weight, main= "ScatterPlot of CityMPG and Weight")
+> 
+> cor.test(Weight,CityMPG,method="pearson")
+
+	Pearson's product-moment correlation
+
+data:  Weight and CityMPG
+t = -13.612, df = 80, p-value < 2.2e-16
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.8911272 -0.7558007
+sample estimates:
+       cor 
+-0.8357354 
+
+> 
+> model1= lm(CityMPG~Weight)
+> summary(model1)
+
+Call:
+lm(formula = CityMPG ~ Weight)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6.5571 -1.9507 -0.0602  1.1697 13.6431 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 47.7686025  1.8451263   25.89   <2e-16 ***
+Weight      -0.0082603  0.0006068  -13.61   <2e-16 ***
+---
+Signif. codes:  0 ?***? 0.001 ?**? 0.01 ?*? 0.05 ?.? 0.1 ? ? 1
+
+Residual standard error: 3.091 on 80 degrees of freedom
+Multiple R-squared:  0.6985,	Adjusted R-squared:  0.6947 
+F-statistic: 185.3 on 1 and 80 DF,  p-value: < 2.2e-16
+
+> 
+> #graphing 
+> par(mfrow=c(2,2))
+> plot(CityMPG~Weight, main= 'Model1',pch=1)
+> abline(model1,lty=2)
+> 
+> plot(Weight, model1$residuals, main= 'Model1',xlab= 'Weight', ylab = 'Residuals')
+> abline(h=0,lty=2)
+> 
+> 
+> model2a= lm(CityMPG~Weight+I(Weight^2))
+> summary(model2a)
+
+Call:
+lm(formula = CityMPG ~ Weight + I(Weight^2))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-5.8289 -1.0599  0.0246  1.1111 13.2850 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  8.564e+01  7.322e+00  11.697  < 2e-16 ***
+Weight      -3.461e-02  5.000e-03  -6.923 1.05e-09 ***
+I(Weight^2)  4.421e-06  8.342e-07   5.300 1.02e-06 ***
+---
+Signif. codes:  0 ?***? 0.001 ?**? 0.01 ?*? 0.05 ?.? 0.1 ? ? 1
+
+Residual standard error: 2.671 on 79 degrees of freedom
+Multiple R-squared:  0.7776,	Adjusted R-squared:  0.7719 
+F-statistic: 138.1 on 2 and 79 DF,  p-value: < 2.2e-16
+
+> 
+> invweight= 1/Weight
+> model2b= lm(CityMPG~invweight)
+> summary(model2b)
+
+Call:
+lm(formula = CityMPG ~ invweight)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-5.6504 -1.2116  0.0602  1.1307 13.5460 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)    -0.8901     1.4552  -0.612    0.543    
+invweight   68958.6837  4100.5349  16.817   <2e-16 ***
+---
+Signif. codes:  0 ?***? 0.001 ?**? 0.01 ?*? 0.05 ?.? 0.1 ? ? 1
+
+Residual standard error: 2.643 on 80 degrees of freedom
+Multiple R-squared:  0.7795,	Adjusted R-squared:  0.7767 
+F-statistic: 282.8 on 1 and 80 DF,  p-value: < 2.2e-16
+
+> 
+> plot(CityMPG~invweight, main= 'Model2b',pch=1)
+> abline(model2b,lty=2)
+> 
+> plot(invweight, model2b$residuals, main= 'Model2b',xlab= 'inverseweight', ylab = 'Residuals')
+> abline(h=0,lty=2)
+> 
+> 
+> #Type as another variable
+> x1grp=ifelse(Type!="Small",0,1)
+> x2grp=ifelse(Type!="Compact",0,1)
+> x3grp=ifelse(Type!="Midsize",0,1)
+> x4grp=ifelse(Type!="Sporty",0,1)
+> 
+> par(mfrow=c(1,1))
+> plot(Weight[Type=="Compact"],CityMPG[Type=="Compact"],main="Scatterplot of Weight vs CityMPG",xlab="Weight",ylab="CityMPG",pch=0,xlim=c(1500,4500),ylim=c(15,50))
+> par(new=T)
+> plot(Weight[Type=="Small"],CityMPG[Type=="Small"],xlab="",ylab="",pch=2,col=2,xlim=c(1600,4200),ylim=c(15,50),axes=F)
+> par(new=T)
+> plot(Weight[Type=="Midsize"],CityMPG[Type=="Midsize"],xlab="",ylab="",pch=3,col=3,xlim=c(1600,4200),ylim=c(15,50),axes=F)
+> par(new=T)
+> plot(Weight[Type=="Sporty"],CityMPG[Type=="Sporty"],xlab="",ylab="",pch=4,col=4,xlim=c(1600,4200),ylim=c(15,50),axes=F)
+> par(new=T)
+> plot(Weight[Type=="Large"],CityMPG[Type=="Large"],xlab="",ylab="",pch=5,col=5,xlim=c(1600,4200),ylim=c(15,50),axes=F)
+> legend("topright",legend=paste(c("Compact","Small","MidSize","Sporty","Large")),col=c(1:5),pch=c(0,c(2:5)))
+> 
+> model3= lm(CityMPG~ invweight + x1grp +x2grp +x3grp + x4grp)
+> summary(model3)
+
+Call:
+lm(formula = CityMPG ~ invweight + x1grp + x2grp + x3grp + x4grp)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-5.5940 -0.9534 -0.2698  0.8349 12.9881 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)     0.6748     2.2238   0.303    0.762    
+invweight   65097.7306  7637.0763   8.524 1.09e-12 ***
+x1grp           0.6359     1.6113   0.395    0.694    
+x2grp          -0.4137     1.1778  -0.351    0.726    
+x3grp          -0.4433     0.9974  -0.444    0.658    
+x4grp          -1.2689     1.2804  -0.991    0.325    
+---
+Signif. codes:  0 ?***? 0.001 ?**? 0.01 ?*? 0.05 ?.? 0.1 ? ? 1
+
+Residual standard error: 2.651 on 76 degrees of freedom
+Multiple R-squared:  0.7892,	Adjusted R-squared:  0.7753 
+F-statistic: 56.91 on 5 and 76 DF,  p-value: < 2.2e-16
+
+> 
+> #Scatterplot against other variables 
+> par(mfrow=c(1,3))
+> plot(Domestic, CityMPG, pch=1 )
+> plot(Horsepower, CityMPG, pch=1 )
+> plot(RPM, CityMPG, pch=1 )
+> 
+> model4a= lm(CityMPG~invweight + Domestic)
+> summary(model4a)
+
+Call:
+lm(formula = CityMPG ~ invweight + Domestic)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-6.084 -1.204 -0.039  1.380 13.211 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  4.893e-02  1.582e+00   0.031    0.975    
+invweight    6.754e+04  4.186e+03  16.133   <2e-16 ***
+Domestic    -8.701e-01  5.961e-01  -1.460    0.148    
+---
+Signif. codes:  0 ?***? 0.001 ?**? 0.01 ?*? 0.05 ?.? 0.1 ? ? 1
+
+Residual standard error: 2.625 on 79 degrees of freedom
+Multiple R-squared:  0.7853,	Adjusted R-squared:  0.7799 
+F-statistic: 144.5 on 2 and 79 DF,  p-value: < 2.2e-16
+
+> VIF(lm(invweight~Domestic))
+[1] 1.057002
+> 
+> invhorsepower = 1/Horsepower
+> model4b= lm(CityMPG~invweight + invhorsepower )
+> summary(model4b)
+
+Call:
+lm(formula = CityMPG ~ invweight + invhorsepower)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-5.5306 -1.3081  0.0137  1.0564 13.7046 
+
+Coefficients:
+                Estimate Std. Error t value Pr(>|t|)    
+(Intercept)      -0.2493     1.9840  -0.126    0.900    
+invweight     64207.3448 10762.9122   5.966 6.53e-08 ***
+invhorsepower   124.6870   260.9277   0.478    0.634    
+---
+Signif. codes:  0 ?***? 0.001 ?**? 0.01 ?*? 0.05 ?.? 0.1 ? ? 1
+
+Residual standard error: 2.656 on 79 degrees of freedom
+Multiple R-squared:  0.7801,	Adjusted R-squared:  0.7746 
+F-statistic: 140.2 on 2 and 79 DF,  p-value: < 2.2e-16
+
+> VIF(lm(invweight~Horsepower))
+[1] 2.984608
+> 
+> model4c= lm(CityMPG~invweight + RPM)
+> summary(model4c)
+
+Call:
+lm(formula = CityMPG ~ invweight + RPM)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-5.8717 -1.0856  0.0817  1.1183 13.3641 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept) -3.064e+00  2.766e+00  -1.108    0.271    
+invweight    6.769e+04  4.328e+03  15.638   <2e-16 ***
+RPM          4.910e-04  5.310e-04   0.925    0.358    
+---
+Signif. codes:  0 ?***? 0.001 ?**? 0.01 ?*? 0.05 ?.? 0.1 ? ? 1
+
+Residual standard error: 2.645 on 79 degrees of freedom
+Multiple R-squared:  0.7819,	Adjusted R-squared:  0.7763 
+F-statistic: 141.6 on 2 and 79 DF,  p-value: < 2.2e-16
+
+> VIF(lm(invweight~RPM))
+[1] 1.112206
+> 
+> 
+> #interpretation of results 
+> summary(model2b)
+
+Call:
+lm(formula = CityMPG ~ invweight)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-5.6504 -1.2116  0.0602  1.1307 13.5460 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)    -0.8901     1.4552  -0.612    0.543    
+invweight   68958.6837  4100.5349  16.817   <2e-16 ***
+---
+Signif. codes:  0 ?***? 0.001 ?**? 0.01 ?*? 0.05 ?.? 0.1 ? ? 1
+
+Residual standard error: 2.643 on 80 degrees of freedom
+Multiple R-squared:  0.7795,	Adjusted R-squared:  0.7767 
+F-statistic: 282.8 on 1 and 80 DF,  p-value: < 2.2e-16
+
+> aov(CityMPG~invweight)
+Call:
+   aov(formula = CityMPG ~ invweight)
+
+Terms:
+                invweight Residuals
+Sum of Squares  1975.5661  558.8363
+Deg. of Freedom         1        80
+
+Residual standard error: 2.643001
+Estimated effects may be unbalanced
+> par(mfrow=c(1,3))
+> plot(CityMPG~invweight, main= 'Model2b',pch=1)
+> abline(model2b,lty=2)
+> 
+> plot(invweight, model2b$residuals, main= 'Model2b',xlab= 'inverseweight', ylab = 'Residuals')
+> abline(h=0,lty=2)
+> qqnorm(model2b$residuals,ylab='Residuals', xlab='Normal Quantiles')
+> qqline(model2b$residuals)
+> ks.test(model2b$residuals,pnorm,mean(model2b$residuals),sd(model2b$residuals))
+
+	One-sample Kolmogorov-Smirnov test
+
+data:  model2b$residuals
+D = 0.12817, p-value = 0.1352
+alternative hypothesis: two-sided
+
+Warning message:
+In ks.test(model2b$residuals, pnorm, mean(model2b$residuals), sd(model2b$residuals)) :
+  ties should not be present for the Kolmogorov-Smirnov test
+> 
+> #percentage decrease in CityMPG given mean(weight)
+> mean(Weight)
+[1] 2988.171
+> invmeanweight = 1/mean(Weight)
+> initialMPG= model2b$coefficients[1]+invmeanweight*model2b$coefficients[2]
+> 
+> invmeanweight1.1 = 1/ (mean(Weight)*1.1)
+> newMPG= model2b$coefficients[1]+invmeanweight1.1*model2b$coefficients[2]
+> 
+> percentchangeMPG = (newMPG-initialMPG)/initialMPG
+> percentchangeMPG
+(Intercept) 
+-0.09455614 

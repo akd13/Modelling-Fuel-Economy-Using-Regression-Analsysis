@@ -1,0 +1,82 @@
+> cars_modified = cars[,c(3,7)]
+> names(cars_modified) = c("Type", "CityMPG")
+> attach(cars_modified)
+The following objects are masked from cars_modified (pos = 3):
+
+    CityMPG, Type
+
+> model1 = aov(CityMPG ~ Type)
+> summary(model1)
+            Df Sum Sq Mean Sq F value   Pr(>F)    
+Type         4   1490   372.4   27.44 3.62e-14 ***
+Residuals   77   1045    13.6                     
+---
+Signif. codes:  0 ?***? 0.001 ?**? 0.01 ?*? 0.05 ?.? 0.1 ? ? 1
+> tapply(CityMPG, Type, mean) #find all means
+ Compact    Large  Midsize    Small   Sporty 
+22.68750 18.36364 19.54545 29.85714 22.58333 
+> boxplot(CityMPG ~ Type)
+> contrasts(Type) = matrix(c(0,1,-1,0,0,0,-1,-1,0,2,3,-1,-1,0,-1,-1,-1,-1,4,-1), nrow=5)
+> contrasts(Type)
+        [,1] [,2] [,3] [,4]
+Compact    0    0    3   -1
+Large      1   -1   -1   -1
+Midsize   -1   -1   -1   -1
+Small      0    0    0    4
+Sporty     0    2   -1   -1
+> 
+> modelc = lm(CityMPG~Type) #Check how different the means are
+> summary(modelc)
+
+Call:
+lm(formula = CityMPG ~ Type)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-7.8571 -1.6875 -0.4545  1.4545 16.1429 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  22.6074     0.4231  53.430  < 2e-16 ***
+Type1        -0.5909     0.6802  -0.869  0.38767    
+Type2         1.2096     0.4208   2.875  0.00523 ** 
+Type3         0.6308     0.2715   2.324  0.02279 *  
+Type4         1.8124     0.1882   9.630 7.37e-15 ***
+---
+Signif. codes:  0 ?***? 0.001 ?**? 0.01 ?*? 0.05 ?.? 0.1 ? ? 1
+
+Residual standard error: 3.684 on 77 degrees of freedom
+Multiple R-squared:  0.5877,	Adjusted R-squared:  0.5663 
+F-statistic: 27.44 on 4 and 77 DF,  p-value: 3.622e-14
+
+> 
+> Type.means = tapply(CityMPG, Type, mean) # Assumption for equal variance
+> gmean = Type.means[Type]
+> CityMPG.abs.dev = abs(CityMPG-gmean)
+> modellev=aov(CityMPG.abs.dev~Type)
+> summary(modellev)
+            Df Sum Sq Mean Sq F value Pr(>F)   
+Type         4  116.0  29.007   4.964 0.0013 **
+Residuals   77  449.9   5.843                  
+---
+Signif. codes:  0 ?***? 0.001 ?**? 0.01 ?*? 0.05 ?.? 0.1 ? ? 1
+> bartlett.test(CityMPG,Type)
+
+	Bartlett test of homogeneity of variances
+
+data:  CityMPG and Type
+Bartlett's K-squared = 44.195, df = 4, p-value = 5.845e-09
+
+> 
+> resid = model1$res # Assumption for Normality
+> ks.test(resid, "pnorm", mean(resid), sd(resid))
+
+	One-sample Kolmogorov-Smirnov test
+
+data:  resid
+D = 0.14962, p-value = 0.05089
+alternative hypothesis: two-sided
+
+Warning message:
+In ks.test(resid, "pnorm", mean(resid), sd(resid)) :
+  ties should not be present for the Kolmogorov-Smirnov test
